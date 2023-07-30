@@ -1,34 +1,48 @@
-const express = require('express')
+const express = require('express');
 const app = express()
+
+const { createServer } = require("http");
+const httpServer = createServer(app);
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
+app.set('view engine', 'ejs');
+app.use("/static", express.static('public'))
+
+const { Server } = require("socket.io");
+const io = new Server(httpServer, { /* options */ });
+
+const uuid = require("uuid");
+
 const port = 3000
-  
-function sum(counter){ 
-    var sum=0;
-    for(var i=0;i<counter;i++){
-            sum+=i;
-        }
-        return sum;
-    }
-    
-function handelFirstRequest(req, res){
-    // res.send('Hello World!')
-    const counter=req.query.counter;
-    var calculatedsum="the sum is "+sum(counter);
-    console.log(calculatedsum);
-    res.send(calculatedsum);
-}
-app.get('/handle', handelFirstRequest)
-// app.post('/createuser',createuser) 
 
-function started(){
-    console.log(`Example app listening on port ${port}`)  
-}
-app.listen(port, started) 
+app.get('/', (req, res) => {
+    res.render('pages/index');
+})
 
-// console.log(calculatedsum) 
-// const fs=require('fs');
-// const express=require('express');
-// function callbackfn(err,data){
-//     console.log(data);
-// }
-// fs.readFile("a.txt","utf-8",callbackfn)
+app.get("/chat", (req, res) => {
+    res.render('pages/chat');
+})
+
+app.get('/generate-room-id', (req, res) => {
+    let roomId = uuid.v4();
+    res.status(200).send({"roomId": roomId});
+})
+
+io.on("connection", (socket) => {
+    socket.on("join-room", (name, roomId) => {
+        socket.join(roomId);
+
+        io.to(roomId).emit("user-connected", name);
+    })
+
+    socket.on("message", (name, roomId, message) => {
+        io.to(roomId).emit("receive-msg", name, message);
+    })
+})
+
+httpServer.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})

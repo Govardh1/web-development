@@ -1,25 +1,40 @@
-import { useState } from "react"
+import React, { useState } from "react"
 
 
-function App(){
-
-  const[count,setCount]=useState(0)
- 
-return(
-  <div>
-    <CustomButton count={count} setCount={setCount}/>
-  </div>
-)
+function App() {
+  return (
+    <div>
+      <HeaderwithButton />
+    </div>
+  )
 }
-  function CustomButton(props){
-    function onclicHandler(){
-        props.setCount(props.count+1)
-      }
-     return(
-       <button onClick={onclicHandler}>counter is {props.count}</button>
-     )
 
+
+const HeaderwithButton = () => {
+  const [FirstTitile, setFirstTitle] = useState("karan")
+  function ChangeButton() {
+    setFirstTitle("my name is " + Math.random())
   }
+  return (
+    <div>
+      <button onClick={ChangeButton}>click me to change</button>
+      <Header title={FirstTitile}></Header>
+      <Header title={"hello"}></Header>
+      <Header title={"hello"}></Header>
+      <Header title={"hello"}></Header>
+      <Header title={"hello"}></Header>
+      <Header title={"hello"}></Header>
 
+    </div>
+  )
+}
+const Header = React.memo(({ title ,discription}) => {
+  return (
+    <div>
+      {title}
+      {discription}
 
+    </div>
+  )
+})
 export default App

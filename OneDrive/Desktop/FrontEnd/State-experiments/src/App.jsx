@@ -1,45 +1,39 @@
-import React, { useContext, useState } from 'react'
-import './App.css'
-
-const BulbContext=React.createContext()
+import React from "react"
+import "./App.css"
+import { RecoilRoot, useRecoilValue, useSetRecoilState } from "recoil"
+import { CounterAtom } from "./Store/atoms/counter"
 
 function App() {
-  const[ buldOn,setBuldOn]=useState(true)
-
   return (
-    <>
-    <BulbContext.Provider value={{
-      buldOn:buldOn,
-      setBuldOn:setBuldOn
-    }}>
-      <LightBuld/>
-    </BulbContext.Provider>
-    </>
+    <RecoilRoot>
+      <Counter />
+    </RecoilRoot>
   )
-}
-function LightBuld(){
-  return(
-   <div>
-     <BulbState/>
-    <ToggleBulbState/>
-   </div>
-  )
-}
-function BulbState(){
-  const {buldOn}=useContext(BulbContext)
-  return <div>
-    {buldOn? "buld on":"bulb off"}
-  </div>
 }
 
-function ToggleBulbState(){
-  const {setBuldOn}=useContext(BulbContext)
-function toggle(){
-  setBuldOn(c=>!c)
+function Counter() {
+  return (
+    <div>
+      <CounterCount />
+      <Increase />
+      <Decrease />
+    </div>
+  )
 }
-  return <div>
-<button onClick={toggle}>toggle-bulb</button>
-  </div>
+
+function CounterCount() {
+  const count = useRecoilValue(CounterAtom)
+  return <div>{count}</div>
+}
+
+function Increase() {
+  const setCount = useSetRecoilState(CounterAtom)
+  return <button onClick={() => setCount(c => c + 1)}>Increase</button>
+}
+
+function Decrease() {
+  const setCount = useSetRecoilState(CounterAtom)
+  return <button onClick={() => setCount(c => c - 1)}>Decrease</button>
 }
 
 export default App

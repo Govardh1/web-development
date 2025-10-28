@@ -1,5 +1,8 @@
 import mongoose, { model , Schema } from "mongoose";  
 import dotenv from "dotenv"
+import { title } from "process";
+import { any } from "zod";
+import { required } from "zod/mini";
 dotenv.config()
 const MONGO_URL = process.env.MONGO_URL;
 
@@ -23,3 +26,13 @@ const UserSchema=new Schema ({
 })
 
 export const UserModel = model("User", UserSchema);
+
+const contentSchema=new Schema({
+  title:{type:String},
+  type:{type:String },
+  link:{type:String},
+  tags:[{type:mongoose.Types.ObjectId, ref:"User"}],
+  userID:[{type:mongoose.Types.ObjectId, ref:"User",required:true}]
+})
+
+export const ContentModel=model("Content",contentSchema)

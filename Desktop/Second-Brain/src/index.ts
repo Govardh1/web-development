@@ -1,12 +1,13 @@
 import bcrypt from "bcrypt";
 import express from "express";
 import jwt from "jsonwebtoken";
-import { UserModel } from "./db.js";
+import { ContentModel, UserModel } from "./db.js";
 import * as z from "zod";
 const app = express();
 app.use(express.json())
 import dotenv from "dotenv";
 import { connectDB } from "./db.js";
+import { UserAuth } from "./middleware.js";
 
 dotenv.config(); // must be before connectDB
 connectDB(); 
@@ -85,11 +86,51 @@ app.post("/api/v1/signin", async (req, res) => {
 	}
 })
 
-app.post("/api/v1/content", (req, res) => {
+app.post("/api/v1/content", UserAuth,async(req, res) => {
+	try {
+		const link=req.body.link;
+		const type=req.body.type;
+		const title=req.body.title;
+		await ContentModel.create({
+			link,
+			type,
+			title,
+			userID:(req as any).userID,
+			tags:[]
+		})
+		res.json({
+			msg:"Content added",
+			link,
+			type,
+			title,
+			userID:(req as any).userID,
+			tags:[],
+			user:(req as any).user
+		})
 
+	} catch (e) {
+		console.error("Signup error:", e);
+		return res.status(500).json({
+			msg: "Something went wrong in post-Content",
+		})
+	}
 })
-app.get("/api/v1/content", (req, res) => {
-
+app.get("/api/v1/content",UserAuth,async(req, res) => {
+	try {
+		
+	const contentGot=await ContentModel.find({
+			userID:(req as any).userID
+		})
+		res.json({
+			msg:"content are here",
+			contentGot
+		})
+	} catch (e) {
+		console.error("Signup error:", e);
+		return res.status(500).json({
+			msg: "Something went wrong in get-Content",
+		})
+	}
 })
 
 app.delete("/api/v1/coneten", (req, res) => {

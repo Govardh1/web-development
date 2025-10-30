@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // File Layout
-    "rootDir": "./src",
+    "rootDir": "Brain-Backend/src",
     "outDir": "./dist",
 
     // Environment Settings
@@ -36,5 +36,5 @@
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true
   },
-  "include": ["src"]
+  "include": ["Brain-Backend/src"]
 }

@@ -152,7 +152,7 @@ app.delete("/api/v1/coneten", UserAuth,async(req, res) => {
 	})
 })
 
-app.post("/api/v1/brain/share",UserAuth, async(req, res) => {
+app.post("/api/v1/brain/share" ,UserAuth, async(req, res) => {
 	const {share}=req.body;
 	if(share){
 		const existingUser=await LinkModel.findOne({
